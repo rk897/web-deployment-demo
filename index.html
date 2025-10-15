@@ -1,8 +1,6 @@
 <!doctype html>
-<html>
-  <head><meta charset="utf-8"><title>GitHub → EC2 Demo</title></head>
-  <body>
-    <h1>This is a test deployment from GitHub to EC2</h1>
-    <p>Deployed from repo: web-deployment-demo</p>
-  </body>
-</html>
+<html><head><meta charset="utf-8"><title>My Site</title></head>
+<body>
+  <h1>Deployed at: <span id="t"></span></h1>
+  <script>document.getElementById('t').innerText = new Date().toLocaleString();</script>
+</body></html>
