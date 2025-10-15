@@ -3,32 +3,33 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - main   # runs only when code is pushed to main branch
+      - main
 
 jobs:
   deploy:
-    name: Deploy App to EC2
+    name: Deploy Application
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repo
-      - name: Checkout code
+      - name: Checkout latest code
         uses: actions/checkout@v4
 
-      # Step 2: Connect to EC2 via SSH and deploy
-      - name: Deploy to EC2
+      - name: Copy files to EC2 and deploy
         uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.EC2_IP }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            cd /var/www/html
-            sudo rm -f index.html
-            # Pull latest code from GitHub (if repo is cloned)
-            # or just upload index.html from workflow
-            echo "${{ github.repository }} deployment started"
-            # Download the latest file from GitHub repo
-            sudo wget https://raw.githubusercontent.com/${{ github.repository }}/main/index.html -O /var/www/html/index.html
-            sudo systemctl restart apache2
-            echo "✅ Deployment completed on
+            cd /home/${{ secrets.EC2_USER }}/myapp || git clone https://github.com/${{ github.repository }} myapp
+            cd myapp
+            git pull origin main
+
+            # For static site (index.html)
+            sudo cp index.html /var/www/html/index.html
+
+            # OR for Node.js app:
+            # npm install
+            # pm2 restart all || pm2 start app.js
+
+            echo "Deployment successful!"
